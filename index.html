@@ -12,15 +12,17 @@
         header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #000; position: fixed; top:0; width:100%; z-index:1000; }
         .logo { color: var(--primary); font-size: 22px; font-weight: bold; cursor: pointer; }
         .menu-btn { background: none; border: none; color: white; font-size: 22px; cursor: pointer; }
-        .sidebar { position: fixed; top: 0; right: -280px; width: 260px; height: 100vh; background: #111; z-index: 2500; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
+        .sidebar { position: fixed; top: 0; right: -280px; width: 260px; height: 100vh; background: #111; z-index: 2500; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); overflow-y: auto; }
         .sidebar.active { right: 0; }
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.6); z-index: 2400; display: none; }
-        .user-box { background: var(--surface); padding: 12px; border-radius: 6px; }
-        .user-box input { width: 100%; padding: 8px; margin-bottom: 8px; background: #333; border: none; color: white; border-radius: 4px; }
-        .btn { padding: 8px 15px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+        .user-box, .genre-box { background: var(--surface); padding: 12px; border-radius: 6px; }
+        .user-box input { width: 100%; padding: 8px; margin-bottom: 8px; background: #333; border: none; color: white; border-radius: 4px; font-size: 12px; }
+        .genre-item { display: block; color: #ccc; padding: 8px 5px; text-decoration: none; font-size: 13px; cursor: pointer; border-bottom: 1px solid #2a2a2a; }
+        .genre-item:last-child { border: none; }
+        .btn { padding: 8px 15px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; justify-content: center; }
         .btn-p { background: var(--primary); color: white; }
         .btn-i { background: #555; color: white; }
-        .hero { position: relative; width: 100%; height: 50vh; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 20px; margin-top: 60px; }
+        .hero { position: relative; width: 100%; height: 45vh; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 20px; margin-top: 60px; }
         .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, var(--background), transparent); }
         .hero-c { position: relative; z-index: 2; }
         .main { padding: 20px; }
@@ -48,21 +50,33 @@
             <button class="menu-btn" id="openMenu"><i class="fa-solid fa-bars"></i></button>
             <div class="logo" id="logoBtn">StreamFlix</div>
         </div>
+        <div id="filterIndicator" style="font-size:12px; color:var(--primary); font-weight:bold;"></div>
     </header>
 
     <div class="sidebar-overlay" id="overlay"></div>
     <div class="sidebar" id="sidebar">
-        <button class="menu-btn" id="closeMenu" style="font-size:16px; text-align:right;"><i class="fa-solid fa-xmark"></i> بستن منو</button>
+        <button class="menu-btn" id="closeMenu" style="font-size:15px; text-align:right; margin-bottom:10px;"><i class="fa-solid fa-xmark"></i> بستن منو</button>
+        
         <div class="user-box">
             <div id="authSec">
-                <h5 style="margin-bottom:8px;">ورود / عضویت</h5>
+                <h5 style="margin-bottom:8px;"><i class="fa-solid fa-user-plus"></i> عضویت و ورود سریع</h5>
                 <input type="text" id="userInput" placeholder="نام کاربری...">
-                <button class="btn btn-p" style="width:100%;" onclick="login()">ورود</button>
+                <input type="password" id="passInput" placeholder="رمز عبور...">
+                <input type="text" id="contactInput" placeholder="ایمیل یا شماره تلفن...">
+                <button class="btn btn-p" style="width:100%;" onclick="login()">ثبت نام / ورود</button>
             </div>
             <div id="profSec" style="display:none;">
-                <p id="welcome" style="font-size:12px; margin-bottom:8px; color:#2ecc71;"></p>
+                <p id="welcome" style="font-size:12px; margin-bottom:8px; color:#2ecc71; font-weight:bold;"></p>
                 <button class="btn btn-p" style="width:100%; background:#c33;" onclick="logout()">خروج</button>
             </div>
+        </div>
+
+        <div class="genre-box">
+            <h5 style="margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-tags"></i> دسته‌بندی و ژانرها</h5>
+            <span class="genre-item" onclick="filterGenre('همه')">🎬 همه فیلم‌ها</span>
+            <span class="genre-item" onclick="filterGenre('دوبله فارسی')">🇮🇷 دوبله فارسی</span>
+            <span class="genre-item" onclick="filterGenre('ترکی')">🇹🇷 سریال ترکی</span>
+            <span class="genre-item" onclick="filterGenre('هندی')">🇮🇳 سینمای هند</span>
         </div>
     </div>
 
@@ -74,7 +88,7 @@
     </div>
 
     <div class="main">
-        <h4><i class="fa-solid fa-fire" style="color:var(--primary); margin-left:5px;"></i>فیلم‌های پیشنهادی</h4>
+        <h4 id="sectionTitle"><i class="fa-solid fa-fire" style="color:var(--primary); margin-left:5px;"></i>فیلم‌های پیشنهادی</h4>
         <div class="grid" id="grid"></div>
     </div>
 
@@ -84,7 +98,8 @@
             <h3 id="mTitle" style="margin-bottom:10px;"></h3>
             <p id="mDesc" style="font-size:13px; color:#aaa; line-height:1.5;"></p>
             <div class="p-sec">
-                <button class="btn btn-p" id="p1"><i class="fa-solid fa-desktop"></i> پخش مستقیم</button>
+                <button class="btn btn-p" id="p1"><i class="fa-solid fa-desktop"></i> پخش مستقیم مرورگر</button>
+                <a class="btn btn-p" id="pDownload" style="background:#2ecc71;" download><i class="fa-solid fa-download"></i> دانلود مستقیم فیلم</a>
                 <button class="btn btn-i" id="p2" style="background:#e67e22;"><i class="fa-solid fa-play"></i> پخش در VLC</button>
                 <button class="btn btn-i" id="p3" style="background:#2980b9;"><i class="fa-solid fa-play"></i> پخش در MX Player</button>
             </div>
@@ -101,7 +116,7 @@
     </div>
 
     <div id="adminPanel">
-        <div style="display:flex; justify-content:between; align-items:center; margin-bottom:15px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h3>🛠️ افزودن فیلم جدید</h3>
             <button class="btn btn-i" onclick="closeA()">بستن</button>
         </div>
@@ -109,15 +124,15 @@
         <div class="form-g"><label>توضیحات</label><input type="text" id="aDesc"></div>
         <div class="form-g"><label>کاور (لینک عکس)</label><input type="text" id="aPost"></div>
         <div class="form-g"><label>لینک مستقیم ویدیو</label><input type="text" id="aUrl"></div>
-        <div class="form-g"><label>ژانر</label><select id="aGen"><option value="هندی دوبله">هندی دوبله</option><option value="کمدی">کمدی</option></select></div>
+        <div class="form-g"><label>ژانر</label><select id="aGen"><option value="دوبله فارسی">دوبله فارسی</option><option value="ترکی">ترکی</option><option value="هندی">هندی</option></select></div>
         <button class="btn btn-p" style="width:100%; padding:10px;" onclick="addMovie()">ذخیره فیلم</button>
     </div>
 
     <script>
-        let def = [{id:1,title:"همیشه شادی ۲ (دوبله فارسی)",desc:"فیلم کمدی و سراسر خنده جذاب هند با کیفیت عالی.",poster:"https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",genre:"هندی دوبله",rating:4.8,feedbacks:[]}];
+        let def = [{id:1,title:"همیشه شادی ۲ (دوبله فارسی)",desc:"فیلم کمدی و سراسر خنده جذاب هند با کیفیت عالی.",poster:"https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",genre:"دوبله فارسی",rating:4.8,feedbacks:[]}];
         let movies = JSON.parse(localStorage.getItem('m_list')) || def;
         let user = localStorage.getItem('m_user') || null;
-        let activeId = null, curRate = 0, lClick = 0;
+        let activeId = null, curRate = 0, lClick = 0, selectedGenre = 'همه';
 
         const sb = document.getElementById('sidebar'), ov = document.getElementById('overlay');
         document.getElementById('openMenu').addEventListener('click', () => { sb.classList.add('active'); ov.style.display='block'; });
@@ -140,7 +155,9 @@
 
         function render() {
             const g = document.getElementById('grid'); g.innerHTML = '';
-            movies.forEach(m => {
+            let filtered = selectedGenre === 'همه' ? movies : movies.filter(m => m.genre === selectedGenre);
+            
+            filtered.forEach(m => {
                 g.innerHTML += `<div class="card" onclick="openM(${m.id})"><img class="poster" src="${m.poster}"><div class="card-body"><b>${m.title}</b><br><span style="color:#aaa; font-size:11px;">${m.genre}</span> <span style="color:#ffb400; float:left;"><i class="fa-solid fa-star"></i> ${m.rating}</span></div></div>`;
             });
             localStorage.setItem('m_list', JSON.stringify(movies));
@@ -150,6 +167,14 @@
                 document.getElementById('heroT').innerText = f.title;
                 document.getElementById('heroBtn').onclick = () => openM(f.id);
             }
+        }
+
+        function filterGenre(genre) {
+            selectedGenre = genre;
+            document.getElementById('filterIndicator').innerText = genre === 'همه' ? '' : `ژانر: ${genre}`;
+            document.getElementById('sectionTitle').innerHTML = `<i class="fa-solid fa-layer-group" style="color:var(--primary); margin-left:5px;"></i> آرشیو فیلم‌های ${genre}`;
+            render();
+            closeMenu();
         }
 
         function addMovie() {
@@ -164,6 +189,10 @@
             document.getElementById('mTitle').innerText = m.title;
             document.getElementById('mDesc').innerText = m.desc;
             document.getElementById('p1').onclick = () => window.open(m.videoUrl, '_blank');
+            
+            let dlBtn = document.getElementById('pDownload');
+            dlBtn.href = m.videoUrl;
+            
             document.getElementById('p2').onclick = () => window.location.href = `vlc://${m.videoUrl}`;
             document.getElementById('p3').onclick = () => window.location.href = `intent:${m.videoUrl}#Intent;package=com.mxtech.videoplayer.ad;end`;
             refFeed(m); resetStars();
@@ -175,7 +204,13 @@
             if(user) { document.getElementById('authSec').style.display='none'; document.getElementById('profSec').style.display='block'; document.getElementById('welcome').innerText = `خوش آمدید ${user}`; }
             else { document.getElementById('authSec').style.display='block'; document.getElementById('profSec').style.display='none'; }
         }
-        function login() { let n = document.getElementById('userInput').value.trim(); if(!n) return alert("نام؟"); user = n; localStorage.setItem('m_user', n); auth(); closeMenu(); }
+        function login() { 
+            let n = document.getElementById('userInput').value.trim(); 
+            let p = document.getElementById('passInput').value.trim();
+            let c = document.getElementById('contactInput').value.trim();
+            if(!n || !p || !c) return alert("لطفاً تمامی فیلدها را پر کنید!"); 
+            user = n; localStorage.setItem('m_user', n); auth(); closeMenu(); 
+        }
         function logout() { localStorage.removeItem('m_user'); user = null; auth(); closeMenu(); }
 
         const st = document.querySelectorAll('#stars i');
