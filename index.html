@@ -260,5 +260,13 @@
 
         function addComm() {
             if(!user) return alert("ابتدا وارد شوید"); if(curRate===0) return alert("امتیاز بدهید");
-            let t =
-        
+            let t = document.getElementById('commIn').value.trim(); if(!t) return alert("متن؟");
+            let m = movies.find(x => x.id === activeId);
+            m.feedbacks.push({user:user, txt:t, r:curRate});
+            m.rating = (m.feedbacks.reduce((a,b)=>a+b.r,0)/m.feedbacks.length).toFixed(1);
+            render(); refFeed(m); resetStars(); alert("ثبت شد!");
+        }
+    </script>
+</body>
+</html>
+
