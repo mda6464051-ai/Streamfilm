@@ -18,11 +18,10 @@
         .user-box, .genre-box { background: var(--surface); padding: 12px; border-radius: 6px; }
         .user-box input { width: 100%; padding: 8px; margin-bottom: 8px; background: #333; border: none; color: white; border-radius: 4px; font-size: 12px; }
         .genre-item { display: block; color: #ccc; padding: 8px 5px; text-decoration: none; font-size: 13px; cursor: pointer; border-bottom: 1px solid #2a2a2a; }
-        .genre-item:last-child { border: none; }
-        .btn { padding: 8px 15px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; justify-content: center; }
+        .btn { padding: 8px 15px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; justify-content: center; font-size: 13px; }
         .btn-p { background: var(--primary); color: white; }
         .btn-i { background: #555; color: white; }
-        .hero { position: relative; width: 100%; height: 45vh; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 20px; margin-top: 60px; }
+        .hero { position: relative; width: 100%; height: 42vh; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 20px; margin-top: 60px; }
         .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, var(--background), transparent); }
         .hero-c { position: relative; z-index: 2; }
         .main { padding: 20px; }
@@ -37,9 +36,9 @@
         .feed-sec { margin-top: 20px; border-top: 1px solid #333; padding-top: 15px; }
         .stars { display: flex; gap: 5px; margin: 8px 0; font-size: 20px; color: #444; cursor: pointer; }
         .stars .fa-star.active { color: #ffb400; }
-        #adminPanel { position: fixed; bottom: 0; left: 0; width: 100%; height: 80vh; background: #111; border-top: 2px solid var(--primary); z-index: 3000; display: none; padding: 20px; overflow-y: auto; }
+        #adminPanel { position: fixed; bottom: 0; left: 0; width: 100%; height: 85vh; background: #111; border-top: 2px solid var(--primary); z-index: 3000; display: none; padding: 20px; overflow-y: auto; }
         .form-g { margin-bottom: 12px; }
-        .form-g label { display: block; font-size: 12px; margin-bottom: 4px; }
+        .form-g label { display: block; font-size: 12px; margin-bottom: 4px; color: #aaa; }
         .form-g input, .form-g select { width: 100%; padding: 8px; background: #222; border: 1px solid #333; color: white; border-radius: 4px; }
     </style>
 </head>
@@ -73,10 +72,7 @@
 
         <div class="genre-box">
             <h5 style="margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-tags"></i> دسته‌بندی و ژانرها</h5>
-            <span class="genre-item" onclick="filterGenre('همه')">🎬 همه فیلم‌ها</span>
-            <span class="genre-item" onclick="filterGenre('دوبله فارسی')">🇮🇷 دوبله فارسی</span>
-            <span class="genre-item" onclick="filterGenre('ترکی')">🇹🇷 سریال ترکی</span>
-            <span class="genre-item" onclick="filterGenre('هندی')">🇮🇳 سینمای هند</span>
+            <div id="menuGenres"></div>
         </div>
     </div>
 
@@ -97,12 +93,15 @@
             <button class="close" onclick="closeM()"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="mTitle" style="margin-bottom:10px;"></h3>
             <p id="mDesc" style="font-size:13px; color:#aaa; line-height:1.5;"></p>
+            
             <div class="p-sec">
-                <button class="btn btn-p" id="p1"><i class="fa-solid fa-desktop"></i> پخش مستقیم مرورگر</button>
-                <a class="btn btn-p" id="pDownload" style="background:#2ecc71;" download><i class="fa-solid fa-download"></i> دانلود مستقیم فیلم</a>
+                <button class="btn btn-p" id="p1"><i class="fa-solid fa-desktop"></i> پخش مستقیم آنلاین</button>
+                <a class="btn btn-p" id="pDlOrg" style="background:#2ecc71;" download><i class="fa-solid fa-download"></i> دانلود کیفیت اصلی</a>
+                <a class="btn btn-p" id="pDl480" style="background:#27ae60;" download><i class="fa-solid fa-arrow-down-long"></i> دانلود کیفیت 480p</a>
                 <button class="btn btn-i" id="p2" style="background:#e67e22;"><i class="fa-solid fa-play"></i> پخش در VLC</button>
                 <button class="btn btn-i" id="p3" style="background:#2980b9;"><i class="fa-solid fa-play"></i> پخش در MX Player</button>
             </div>
+
             <div class="feed-sec">
                 <h5>ثبت امتیاز و نظر</h5>
                 <div class="stars" id="stars">
@@ -116,21 +115,34 @@
     </div>
 
     <div id="adminPanel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3>🛠️ افزودن فیلم جدید</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:8px;">
+            <h3>🛠️ مدیریت پلتفرم StreamFlix</h3>
             <button class="btn btn-i" onclick="closeA()">بستن</button>
         </div>
-        <div class="form-g"><label>عنوان</label><input type="text" id="aTitle"></div>
+        
+        <div style="background:#1f1f1f; padding:12px; border-radius:6px; margin-bottom:15px; border:1px dashed var(--primary);">
+            <h4 style="font-size:13px; margin-bottom:8px;"><i class="fa-solid fa-plus"></i> تعریف ژانر / دسته‌بندی جدید</h4>
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="newGenreName" placeholder="مثال: ترکی، هندی، دوبله، انیمیشن" style="width:70%; padding:6px; background:#111; border:1px solid #333; color:white; border-radius:4px;">
+                <button class="btn btn-p" style="width:30%; padding:0;" onclick="makeNewGenre()">ایجاد ژانر</button>
+            </div>
+        </div>
+
+        <div class="form-g"><label>عنوان فیلم</label><input type="text" id="aTitle"></div>
         <div class="form-g"><label>توضیحات</label><input type="text" id="aDesc"></div>
         <div class="form-g"><label>کاور (لینک عکس)</label><input type="text" id="aPost"></div>
-        <div class="form-g"><label>لینک مستقیم ویدیو</label><input type="text" id="aUrl"></div>
-        <div class="form-g"><label>ژانر</label><select id="aGen"><option value="دوبله فارسی">دوبله فارسی</option><option value="ترکی">ترکی</option><option value="هندی">هندی</option></select></div>
-        <button class="btn btn-p" style="width:100%; padding:10px;" onclick="addMovie()">ذخیره فیلم</button>
+        <div class="form-g"><label>لینک مستقیم ویدیو (کیفیت اصلی)</label><input type="text" id="aUrl"></div>
+        <div class="form-g"><label>لینک مستقیم ویدیو (کیفیت 480p)</label><input type="text" id="aUrl480" placeholder="لینک مستقیم کیفیت کم حجم"></div>
+        <div class="form-g"><label>ژانر فیلم</label><select id="aGen"></select></div>
+        <button class="btn btn-p" style="width:100%; padding:10px;" onclick="addMovie()">ذخیره و انتشار فیلم</button>
     </div>
 
     <script>
-        let def = [{id:1,title:"همیشه شادی ۲ (دوبله فارسی)",desc:"فیلم کمدی و سراسر خنده جذاب هند با کیفیت عالی.",poster:"https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",genre:"دوبله فارسی",rating:4.8,feedbacks:[]}];
-        let movies = JSON.parse(localStorage.getItem('m_list')) || def;
+        let defGenres = ["دوبله فارسی", "ترکی", "هندی"];
+        let defMovies = [{id:1,title:"همیشه شادی ۲ (دوبله فارسی)",desc:"فیلم کمدی و سراسر خنده جذاب هند با کیفیت عالی.",poster:"https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",videoUrl480:"https://www.w3schools.com/html/mov_bbb.mp4",genre:"دوبله فارسی",rating:4.8,feedbacks:[]}];
+        
+        let genres = JSON.parse(localStorage.getItem('m_genres')) || defGenres;
+        let movies = JSON.parse(localStorage.getItem('m_list')) || defMovies;
         let user = localStorage.getItem('m_user') || null;
         let activeId = null, curRate = 0, lClick = 0, selectedGenre = 'همه';
 
@@ -143,15 +155,41 @@
         document.getElementById('logoBtn').addEventListener('click', () => {
             lClick++;
             if (lClick === 4) {
-                if (prompt("پین‌کد مدیریت:") === "1522") { document.getElementById('adminPanel').style.display = 'block'; closeMenu(); }
-                else alert("خطا!");
+                if (prompt("پین‌کد مدیریت:") === "1522") { 
+                    refreshAdminGenres();
+                    document.getElementById('adminPanel').style.display = 'block'; 
+                    closeMenu(); 
+                } else alert("خطا!");
                 lClick = 0;
             }
             setTimeout(() => { lClick = 0; }, 3000);
         });
         const closeA = () => document.getElementById('adminPanel').style.display='none';
 
-        window.addEventListener('DOMContentLoaded', () => { render(); auth(); });
+        window.addEventListener('DOMContentLoaded', () => { refreshGenresUI(); render(); auth(); });
+
+        function refreshGenresUI() {
+            localStorage.setItem('m_genres', JSON.stringify(genres));
+            const container = document.getElementById('menuGenres');
+            container.innerHTML = `<span class="genre-item" onclick="filterGenre('همه')">🎬 همه فیلم‌ها</span>`;
+            genres.forEach(g => {
+                container.innerHTML += `<span class="genre-item" onclick="filterGenre('${g}')">🔹 ${g}</span>`;
+            });
+        }
+
+        function refreshAdminGenres() {
+            const select = document.getElementById('aGen'); select.innerHTML = '';
+            genres.forEach(g => { select.innerHTML += `<option value="${g}">${g}</option>`; });
+        }
+
+        function makeNewGenre() {
+            let val = document.getElementById('newGenreName').value.trim();
+            if(!val) return alert("نام ژانر خالی است!");
+            if(genres.includes(val)) return alert("این ژانر از قبل وجود دارد!");
+            genres.push(val);
+            document.getElementById('newGenreName').value = '';
+            refreshGenresUI(); refreshAdminGenres(); alert("ژانر جدید با موفقیت اضافه شد!");
+        }
 
         function render() {
             const g = document.getElementById('grid'); g.innerHTML = '';
@@ -173,15 +211,14 @@
             selectedGenre = genre;
             document.getElementById('filterIndicator').innerText = genre === 'همه' ? '' : `ژانر: ${genre}`;
             document.getElementById('sectionTitle').innerHTML = `<i class="fa-solid fa-layer-group" style="color:var(--primary); margin-left:5px;"></i> آرشیو فیلم‌های ${genre}`;
-            render();
-            closeMenu();
+            render(); closeMenu();
         }
 
         function addMovie() {
-            let t = document.getElementById('aTitle').value, d = document.getElementById('aDesc').value, p = document.getElementById('aPost').value, u = document.getElementById('aUrl').value, g = document.getElementById('aGen').value;
-            if(!t || !u) return alert("فیلدها را پر کنید");
-            movies.push({id:Date.now(), title:t, desc:d, poster:p||"https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500", videoUrl:u, genre:g, rating:5.0, feedbacks:[]});
-            render(); closeA(); alert("افزوده شد!");
+            let t = document.getElementById('aTitle').value, d = document.getElementById('aDesc').value, p = document.getElementById('aPost').value, u = document.getElementById('aUrl').value, u480 = document.getElementById('aUrl480').value, g = document.getElementById('aGen').value;
+            if(!t || !u) return alert("وارد کردن عنوان و لینک اصلی الزامی است");
+            movies.push({id:Date.now(), title:t, desc:d, poster:p||"https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500", videoUrl:u, videoUrl480:u480||u, genre:g, rating:5.0, feedbacks:[]});
+            render(); closeA(); alert("فیلم جدید منتشر شد!");
         }
 
         function openM(id) {
@@ -190,8 +227,8 @@
             document.getElementById('mDesc').innerText = m.desc;
             document.getElementById('p1').onclick = () => window.open(m.videoUrl, '_blank');
             
-            let dlBtn = document.getElementById('pDownload');
-            dlBtn.href = m.videoUrl;
+            document.getElementById('pDlOrg').href = m.videoUrl;
+            document.getElementById('pDl480').href = m.videoUrl480 || m.videoUrl;
             
             document.getElementById('p2').onclick = () => window.location.href = `vlc://${m.videoUrl}`;
             document.getElementById('p3').onclick = () => window.location.href = `intent:${m.videoUrl}#Intent;package=com.mxtech.videoplayer.ad;end`;
@@ -205,10 +242,8 @@
             else { document.getElementById('authSec').style.display='block'; document.getElementById('profSec').style.display='none'; }
         }
         function login() { 
-            let n = document.getElementById('userInput').value.trim(); 
-            let p = document.getElementById('passInput').value.trim();
-            let c = document.getElementById('contactInput').value.trim();
-            if(!n || !p || !c) return alert("لطفاً تمامی فیلدها را پر کنید!"); 
+            let n = document.getElementById('userInput').value.trim(); let p = document.getElementById('passInput').value.trim(); let c = document.getElementById('contactInput').value.trim();
+            if(!n || !p || !c) return alert("تمامی فیلدها را پر کنید!"); 
             user = n; localStorage.setItem('m_user', n); auth(); closeMenu(); 
         }
         function logout() { localStorage.removeItem('m_user'); user = null; auth(); closeMenu(); }
@@ -225,12 +260,5 @@
 
         function addComm() {
             if(!user) return alert("ابتدا وارد شوید"); if(curRate===0) return alert("امتیاز بدهید");
-            let t = document.getElementById('commIn').value.trim(); if(!t) return alert("متن؟");
-            let m = movies.find(x => x.id === activeId);
-            m.feedbacks.push({user:user, txt:t, r:curRate});
-            m.rating = (m.feedbacks.reduce((a,b)=>a+b.r,0)/m.feedbacks.length).toFixed(1);
-            render(); refFeed(m); resetStars(); alert("ثبت شد!");
-        }
-    </script>
-</body>
-</html>
+            let t =
+        
