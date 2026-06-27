@@ -3,481 +3,456 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamFlix - پلتفرم فیلم و سریال</title>
-    <meta name="theme-color" content="#141414">
+    <title>StreamFlix | پلتفرم تماشا و دانلود فیلم و سریال</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
+        :root {
+            --primary: #e50914;
+            --background: #141414;
+            --surface: #1f1f1f;
+            --text: #ffffff;
+            --text-muted: #aaaaaa;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #141414;
-            color: #ffffff;
-            padding-bottom: 80px;
+            background-color: var(--background);
+            color: var(--text);
+            padding-bottom: 70px;
             overflow-x: hidden;
         }
 
+        /* هدر اصلی سایت */
         header {
-            background-color: #090909;
-            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 15px 5%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
             position: fixed;
             top: 0;
             width: 100%;
-            z-index: 100;
-            border-bottom: 1px solid #222;
+            z-index: 1000;
+            transition: background 0.3s;
+        }
+        header.scrolled {
+            background: #000000;
         }
 
         .logo {
-            color: #E50914;
-            font-size: 22px;
+            color: var(--primary);
+            font-size: 24px;
             font-weight: bold;
             cursor: pointer;
+            user-select: none;
         }
 
-        /* بخش اصلی محتوا */
-        .container {
-            margin-top: 80px;
-            padding: 15px;
+        .user-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 20px;
+            cursor: pointer;
+            position: relative;
         }
 
-        .section-title {
-            font-size: 18px;
-            margin: 20px 0 10px 0;
-            color: #E50914;
+        /* اسلایدر فیلیمو / نتفلیکس */
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            background-size: cover;
+            background-position: center;
             display: flex;
+            align-items: center;
+            padding: 0 5%;
+            transition: background-image 0.5s ease-in-out;
+        }
+        .hero-slider::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, var(--background), transparent 50%),
+                        linear-gradient(to right, rgba(0,0,0,0.6), transparent);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+        }
+        .hero-title { font-size: 36px; margin-bottom: 10px; font-weight: bold; }
+        .hero-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+        .hero-btns .btn {
+            padding: 10px 25px;
+            border-radius: 4px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 10px;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
         }
+        .btn-play { background-color: var(--text); color: #000; }
+        .btn-info { background-color: rgba(109, 109, 110, 0.7); color: var(--text); }
 
-        /* کارت‌های فیلم و سریال */
-        .grid {
+        /* لیست فیلم‌ها */
+        .main-container { padding: 30px 5%; }
+        .section-title { font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .movie-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             gap: 15px;
+            margin-bottom: 40px;
         }
-
-        .card {
-            background: #1f1f1f;
-            border-radius: 8px;
+        .movie-card {
+            background-color: var(--surface);
+            border-radius: 6px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
         }
+        .movie-card:hover { transform: scale(1.05); }
+        .movie-poster { width: 100%; height: 200px; object-fit: cover; }
+        .movie-info { padding: 10px; }
+        .movie-name { font-size: 14px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .movie-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+        .rating-badge { color: #ffb400; display: flex; align-items: center; gap: 3px; }
 
-        .card img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-
-        .card-details {
-            padding: 10px;
-        }
-
-        .card-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card-meta {
-            font-size: 11px;
-            color: #b3b3b3;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* مودال جزئیات پخش */
+        /* مدال جزئیات فیلم، نظرات و امتیازدهی */
         .modal {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 200;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 2000;
             display: none;
             overflow-y: auto;
             padding: 20px;
         }
-
         .modal-content {
-            background: #181818;
-            border-radius: 10px;
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 20px;
+            background-color: var(--surface);
+            max-width: 700px;
+            margin: 30px auto;
+            border-radius: 8px;
+            overflow: hidden;
             position: relative;
         }
-
-        .close-btn {
+        .close-modal {
             position: absolute;
-            top: 15px;
-            left: 15px;
-            font-size: 20px;
-            cursor: pointer;
-            color: #fff;
+            top: 15px; left: 15px;
+            background: rgba(0,0,0,0.5);
+            border: none; color: white;
+            width: 35px; height: 35px; border-radius: 50%;
+            font-size: 18px; cursor: pointer; z-index: 10;
         }
+        .modal-preview { width: 100%; height: 300px; background-size: cover; background-position: center; position: relative; }
+        .modal-body { padding: 25px; }
+        .player-section { margin: 20px 0; display: flex; flex-direction: column; gap: 10px; }
+        
+        /* بخش نظرات و ثبت امتیاز */
+        .feedback-section { margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; }
+        .stars-rate { display: flex; gap: 5px; margin: 10px 0; font-size: 22px; cursor: pointer; color: #444; }
+        .stars-rate .fa-star.active { color: #ffb400; }
+        .comment-box { width: 100%; background: #333; border: none; padding: 10px; color: white; border-radius: 4px; resize: none; margin-bottom: 10px; }
+        .comments-list { margin-top: 15px; max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .comment-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 4px; font-size: 13px; }
+        .comment-user { font-weight: bold; color: var(--primary); font-size: 12px; margin-bottom: 3px; }
 
-        .modal-img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .modal-title { margin-bottom: 10px; }
-        .modal-genre { color: #E50914; font-size: 13px; margin-bottom: 10px; }
-        .modal-desc { font-size: 13px; color: #cccccc; line-height: 1.6; margin-bottom: 20px; }
-
-        /* باکس انتخاب پلیر و دانلود */
-        .action-box {
-            background: #222;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .select-style {
-            width: 100%;
-            padding: 10px;
-            background: #333;
-            color: #fff;
-            border: 1px solid #444;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-play { background: #E50914; color: #fff; }
-        .btn-download { background: #333; color: #fff; border: 1px solid #555; }
-
-        /* بخش سریال‌ها (انتخاب فصل و قسمت) */
-        .series-selector {
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        /* پنل مدیریت مخفی */
-        #admin-panel {
-            background: #0f0f0f;
-            border-top: 2px solid #E50914;
-            padding: 20px;
-            margin-top: 30px;
-            display: none;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 13px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            background: #222;
-            border: 1px solid #444;
-            color: #fff;
-            border-radius: 5px;
-        }
-
-        /* ویدیو پلیر داخلی */
-        #internal-player-container {
-            display: none;
+        /* منوی کاربری و سیستم ورود/ثبت‌نام */
+        .user-panel {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 300;
-            justify-content: center; align-items: center;
+            top: 70px; left: 5%;
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 15px;
+            width: 250px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1500;
+        }
+        .user-panel input {
+            width: 100%; padding: 8px; margin-bottom: 10px;
+            background: #333; border: none; color: white; border-radius: 4px;
         }
 
-        video { width: 100%; height: auto; }
-
-        .close-player {
-            position: absolute; top: 20px; left: 20px;
-            background: rgba(255,255,255,0.2); padding: 10px;
-            border-radius: 50%; cursor: pointer; z-index: 310;
+        /* پنل مدیریت مدرن */
+        #adminPanel {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%; height: 85vh;
+            background-color: #111;
+            border-top: 3px solid var(--primary);
+            z-index: 3000;
+            display: none;
+            padding: 25px;
+            overflow-y: auto;
+        }
+        .admin-form-group { margin-bottom: 15px; }
+        .admin-form-group label { display: block; margin-bottom: 5px; font-size: 13px; color: var(--text-muted); }
+        .admin-form-group input, .admin-form-group select {
+            width: 100%; padding: 10px; background: #222; border: 1px solid #333; color: white; border-radius: 4px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <!-- کلیک روی لوگو برای ورود به پنل مدیریت با پین کد -->
-        <div class="logo" onclick="checkAdminAccess()">StreamFlix <span style="font-size: 10px; color: #555;">●</span></div>
-        <div><i class="fas fa-search"></i></div>
+    <!-- هدر سایت -->
+    <header id="mainHeader">
+        <div class="logo" id="logoBtn">StreamFlix</div>
+        <button class="user-menu-btn" id="userMenuBtn"><i class="fa-solid fa-user"></i></button>
     </header>
 
-    <div class="container">
-        <h2 class="section-title"><i class="fas fa-film"></i> آرشیو فیلم و سریال‌ها</h2>
-        <div class="grid" id="content-grid">
-            <!-- آیتم‌ها به صورت دینامیک اینجا اضافه می‌شوند -->
+    <!-- منوی کاربری / ورود و ثبت نام -->
+    <div class="user-panel" id="userPanel">
+        <div id="authSection">
+            <h4 style="margin-bottom: 10px;">ورود / ثبت‌نام</h4>
+            <input type="text" id="usernameInput" placeholder="نام کاربری">
+            <button class="btn btn-play" style="width:100%; margin:0;" onclick="loginUser()">ورود</button>
         </div>
-        
-        <!-- پنل مدیریت مخفی -->
-        <div id="admin-panel">
-            <h3 style="color: #E50914; margin-bottom: 15px;">پنل مدیریت افزونه مانیتورینگ</h3>
-            <div class="form-group">
-                <label>نوع محتوا</label>
-                <select id="add-type" class="form-control" onchange="toggleFormSeries()">
-                    <option value="movie">فیلم سینمایی</option>
-                    <option value="series">سریال</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>عنوان</label>
-                <input type="text" id="add-title" class="form-control" placeholder="مثلاً: لئو">
-            </div>
-            <div class="form-group">
-                <label>ژانر</label>
-                <input type="text" id="add-genre" class="form-control" placeholder="انیمیشن، کمدی">
-            </div>
-            <div class="form-group">
-                <label>آدرس پوستر (لینک عکس)</label>
-                <input type="text" id="add-poster" class="form-control" placeholder="https://...">
-            </div>
-            <div class="form-group">
-                <label>خلاصه داستان</label>
-                <textarea id="add-desc" class="form-control" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label>لینک ویدیو / لینک قسمت اول</label>
-                <input type="text" id="add-url" class="form-control" placeholder="https://.../video.mp4">
-            </div>
-            <button class="action-btn btn-play" style="width: 100%;" onclick="saveNewContent()">افزودن به لیست</button>
+        <div id="profileSection" style="display: none;">
+            <p id="welcomeMsg" style="font-size: 14px; margin-bottom: 10px;"></p>
+            <button class="btn btn-info" style="width:100%; margin:0; background: #cc3333;" onclick="logoutUser()">خروج از حساب</button>
         </div>
     </div>
 
-    <!-- مودال نمایش جزئیات و پخش -->
-    <div class="modal" id="media-modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></span>
-            <img id="modal-img" src="" class="modal-img">
-            <h2 id="modal-title" class="modal-title"></h2>
-            <div id="modal-genre" class="modal-genre"></div>
-            <p id="modal-desc" class="modal-desc"></p>
-            
-            <!-- بخش انتخاب فصل و قسمت برای سریال ها -->
-            <div class="series-selector" id="modal-series-box">
-                <select id="series-season" class="select-style">
-                    <option value="1">فصل 1</option>
-                </select>
-                <select id="series-episode" class="select-style">
-                    <option value="1">قسمت 1</option>
-                    <option value="2">قسمت 2</option>
-                    <option value="3">قسمت 3</option>
-                </select>
+    <!-- اسلایدر اصلی نتفلیکسی -->
+    <div class="hero-slider" id="heroSlider">
+        <div class="hero-content">
+            <h1 class="hero-title" id="heroTitle">بارگذاری...</h1>
+            <p class="hero-desc" id="heroDesc">لطفاً شکیبا باشید.</p>
+            <div class="hero-btns">
+                <button class="btn btn-play" id="heroPlayBtn"><i class="fa-solid fa-play"></i> پخش آنلاین</button>
             </div>
+        </div>
+    </div>
 
-            <div class="action-box">
-                <label style="font-size: 13px; display:block; margin-bottom:8px;">انتخاب پخش‌کننده:</label>
-                <select id="player-select" class="select-style">
-                    <option value="internal">پخش‌کننده داخلی (مرورگر)</option>
-                    <option value="maxplayer">MX Player (اندروید)</option>
-                    <option value="vlc">VLC Player</option>
-                </select>
+    <!-- محتوای اصلی و گرید فیلم‌ها -->
+    <div class="main-container">
+        <div class="section-title"><i class="fa-solid fa-fire" style="color: var(--primary);"></i>برترین فیلم‌ها و سریال‌ها</div>
+        <div class="movie-grid" id="movieGrid"></div>
+    </div>
+
+    <!-- مدال جزییات و تماشا -->
+    <div class="modal" id="movieModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-preview" id="modalPreview"></div>
+            <div class="modal-body">
+                <h2 id="modalTitle" style="margin-bottom: 10px;"></h2>
+                <p id="modalDesc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6;"></p>
                 
-                <div class="btn-group">
-                    <button class="action-btn btn-play" onclick="playMedia()"><i class="fas fa-play"></i> پخش آنلاین</button>
-                    <a id="download-link" href="#" target="_blank" class="action-btn btn-download"><i class="fas fa-download"></i> دانلود فیلم</a>
+                <div class="player-section">
+                    <button class="btn btn-play" id="directPlayBtn" style="margin:0;"><i class="fa-solid fa-desktop"></i> پخش آنلاین در مرورگر</button>
+                    <button class="btn btn-info" id="vlcPlayBtn" style="margin:0; background:#e67e22;"><i class="fa-solid fa-play"></i> پخش در VLC Player</button>
+                    <button class="btn btn-info" id="mxPlayBtn" style="margin:0; background:#2980b9;"><i class="fa-solid fa-play"></i> پخش در MX Player</button>
+                </div>
+
+                <!-- نظرات و امتیازدهی کاربران -->
+                <div class="feedback-section">
+                    <h3><i class="fa-solid fa-star" style="color:#ffb400;"></i> امتیاز و نظرات کاربران</h3>
+                    <div class="stars-rate" id="ratingStars">
+                        <i class="fa-solid fa-star" data-value="1"></i>
+                        <i class="fa-solid fa-star" data-value="2"></i>
+                        <i class="fa-solid fa-star" data-value="3"></i>
+                        <i class="fa-solid fa-star" data-value="4"></i>
+                        <i class="fa-solid fa-star" data-value="5"></i>
+                    </div>
+                    <textarea class="comment-box" id="commentText" rows="3" placeholder="نظر خود را درباره این فیلم بنویسید..."></textarea>
+                    <button class="btn btn-play" style="margin:0; padding:8px 20px;" onclick="submitFeedback()">ثبت نظر</button>
+                    
+                    <div class="comments-list" id="commentsList"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- پلیر داخلی -->
-    <div id="internal-player-container">
-        <span class="close-player" onclick="closeInternalPlayer()"><i class="fas fa-arrow-right"></i></span>
-        <video id="internal-video" controls></video>
+    <!-- پنل مدیریت مخفی فوق حرفه‌ای -->
+    <div id="adminPanel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2>🛠️ مدیریت پیشرفته پلتفرم</h2>
+            <button class="btn btn-info" style="background:#333;" onclick="closeAdmin()">بستن پنل</button>
+        </div>
+        <div class="admin-form-group">
+            <label>عنوان فیلم / سریال</label>
+            <input type="text" id="addTitle" placeholder="مثال: همیشه شادی ۲">
+        </div>
+        <div class="admin-form-group">
+            <label>توضیحات و خلاصه داستان</label>
+            <input type="text" id="addDesc" placeholder="خلاصه‌ای از داستان فیلم...">
+        </div>
+        <div class="admin-form-group">
+            <label>لینک پوستر / کاور فیلم</label>
+            <input type="text" id="addPoster" placeholder="https://example.com/poster.jpg">
+        </div>
+        <div class="admin-form-group">
+            <label>لینک مستقیم ویدیو (MP4/MKV)</label>
+            <input type="text" id="addVideoUrl" placeholder="لینک مستقیم فایل ویدیو">
+        </div>
+        <div class="admin-form-group">
+            <label>ژانر / دسته‌بندی</label>
+            <select id="addGenre">
+                <option value="کمدی">کمدی</option>
+                <option value="اکشن">اکشن</option>
+                <option value="هندی دوبله">هندی دوبله</option>
+                <option value="درام">درام</option>
+            </select>
+        </div>
+        <button class="btn btn-play" style="width:100%; margin:0; padding:12px;" onclick="addNewMovie()">افزودن به آرشیو سایت</button>
     </div>
 
     <script>
-        // دیتای اولیه نمونه
-        let mediaData = [
+        // دیتابیس لوکال اولیه (ذخیره در LocalStorage برای ماندگاری اطلاعات)
+        let defaultMovies = [
             {
                 id: 1,
-                type: 'movie',
-                title: 'رنگ شادی ۳',
-                genre: 'کمدی، درام | هندی دوبله فارسی',
-                poster: 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=400',
-                desc: 'یک فیلم کمدی و جذاب هندی همراه با صحنه‌های شاد و خانوادگی که به صورت اختصاصی دوبله شده است.',
-                url: 'https://www.w3schools.com/html/mov_bbb.mp4'
-            },
-            {
-                id: 2,
-                type: 'series',
-                title: 'سریال پایتخت',
-                genre: 'کمدی، اجتماعی',
-                poster: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?q=80&w=400',
-                desc: 'ماجراهای جذاب و کمدی نقی معمولی و خانواده‌اش در طول فصل‌های مختلف.',
-                url: 'https://www.w3schools.com/html/movie.mp4'
+                title: "همیشه شادی ۲ (دوبله فارسی)",
+                desc: "یک فیلم کمدی و سراسر خنده جذاب هند با برترین کیفیت پخش اختصاصی.",
+                poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",
+                videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+                genre: "هندی دوبله",
+                rating: 4.8,
+                feedbacks: [{user: "علی", comment: "خیلی خنده‌دار و عالی بود دمتون گرم!", rate: 5}]
             }
         ];
 
-        let currentActiveMedia = null;
+        let movies = JSON.parse(localStorage.getItem('stream_movies')) || defaultMovies;
+        let currentUser = localStorage.getItem('stream_user') || null;
+        let activeMovieId = null;
+        let selectedUserRating = 0;
 
-        function renderGrid() {
-            const grid = document.getElementById('content-grid');
+        // سیستم شمارش کلیک برای پنل مدیریت (۴ بار لمس روی لوگو)
+        let logoClickCount = 0;
+        document.getElementById('logoBtn').addEventListener('click', () => {
+            logoClickCount++;
+            if (logoClickCount === 4) {
+                let pin = prompt("پین‌کد مدیریت را وارد کنید:");
+                if (pin === "1522") {
+                    document.getElementById('adminPanel').style.display = 'block';
+                } else {
+                    alert("پین‌کد اشتباه است!");
+                }
+                logoClickCount = 0;
+            }
+            setTimeout(() => { logoClickCount = 0; }, 3000); // ریست شمارنده بعد از ۳ ثانیه
+        });
+
+        function closeAdmin() { document.getElementById('adminPanel').style.display = 'none'; }
+
+        // لود قالب و رندرسازی اطلاعات
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMovies();
+            updateSlider();
+            checkUserAuth();
+            
+            window.addEventListener('scroll', () => {
+                if(window.scrollY > 50) document.getElementById('mainHeader').classList.add('scrolled');
+                else document.getElementById('mainHeader').classList.remove('scrolled');
+            });
+        });
+
+        function renderMovies() {
+            const grid = document.getElementById('movieGrid');
             grid.innerHTML = '';
-            mediaData.forEach(item => {
+            movies.forEach(movie => {
                 grid.innerHTML += `
-                    <div class="card" onclick="openModal(${item.id})">
-                        <img src="${item.poster}" alt="${item.title}">
-                        <div class="card-details">
-                            <div class="card-title">${item.title}</div>
-                            <div class="card-meta">
-                                <span>${item.type === 'movie' ? 'سینمایی' : 'سریال'}</span>
-                                <span><i class="fas fa-star" style="color:gold"></i> 8.2</span>
+                    <div class="movie-card" onclick="openModal(${movie.id})">
+                        <img class="movie-poster" src="${movie.poster}" alt="${movie.title}">
+                        <div class="movie-info">
+                            <div class="movie-name">${movie.title}</div>
+                            <div class="movie-meta">
+                                <span>${movie.genre}</span>
+                                <span class="rating-badge"><i class="fa-solid fa-star"></i> ${movie.rating}</span>
                             </div>
                         </div>
                     </div>
                 `;
             });
+            localStorage.setItem('stream_movies', JSON.stringify(movies));
         }
 
-        function openModal(id) {
-            const item = mediaData.find(m => m.id === id);
-            currentActiveMedia = item;
-            
-            document.getElementById('modal-img').src = item.poster;
-            document.getElementById('modal-title').innerText = item.title;
-            document.getElementById('modal-genre').innerText = item.genre;
-            document.getElementById('modal-desc').innerText = item.desc;
-            document.getElementById('download-link').href = item.url;
-            
-            const seriesBox = document.getElementById('modal-series-box');
-            if(item.type === 'series') {
-                seriesBox.style.display = 'block';
-                document.getElementById('download-link').innerHTML = '<i class="fas fa-download"></i> دانلود این قسمت';
-            } else {
-                seriesBox.style.display = 'none';
-                document.getElementById('download-link').innerHTML = '<i class="fas fa-download"></i> دانلود فیلم';
-            }
-            
-            document.getElementById('media-modal').style.display = 'block';
+        // اسلایدر داینامیک بالای صفحه
+        function updateSlider() {
+            if(movies.length === 0) return;
+            const featured = movies[movies.length - 1]; // آخرین فیلم افزوده شده به عنوان بنر اصلی
+            const slider = document.getElementById('heroSlider');
+            slider.style.backgroundImage = `url('${featured.poster}')`;
+            document.getElementById('heroTitle').innerText = featured.title;
+            document.getElementById('heroDesc').innerText = featured.desc;
+            document.getElementById('heroPlayBtn').onclick = () => openModal(featured.id);
         }
 
-        function closeModal() {
-            document.getElementById('media-modal').style.display = 'none';
-        }
+        // افزودن فیلم جدید توسط ادمین
+        function addNewMovie() {
+            const title = document.getElementById('addTitle').value;
+            const desc = document.getElementById('addDesc').value;
+            const poster = document.getElementById('addPoster').value || "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500";
+            const videoUrl = document.getElementById('addVideoUrl').value;
+            const genre = document.getElementById('addGenre').value;
 
-        function playMedia() {
-            const playerType = document.getElementById('player-select').value;
-            const videoUrl = currentActiveMedia.url;
+            if(!title || !videoUrl) { alert("وارد کردن نام فیلم و لینک ویدیو الزامی است."); return; }
 
-            if (playerType === 'internal') {
-                // پخش کننده داخلی
-                document.getElementById('internal-player-container').style.display = 'flex';
-                const video = document.getElementById('internal-video');
-                video.src = videoUrl;
-                video.play();
-            } else if (playerType === 'maxplayer') {
-                // اینتنت مخصوص MX Player
-                window.location.href = `intent:${videoUrl}#Intent;package=com.mxtech.videoplayer.ad;S.title=${encodeURIComponent(currentActiveMedia.title)};end`;
-            } else if (playerType === 'vlc') {
-                // اینتنت مخصوص VLC
-                window.location.href = `vlc://${videoUrl}`;
-            }
-        }
-
-        function closeInternalPlayer() {
-            const video = document.getElementById('internal-video');
-            video.pause();
-            document.getElementById('internal-player-container').style.display = 'none';
-        }
-
-        // پین کد دسترسی مدیریت
-        function checkAdminAccess() {
-            const pin = prompt("لطفاً پین کد امنیتی را وارد کنید:");
-            if (pin === "1522") {
-                alert("دسترسی مدیریت تایید شد.");
-                document.getElementById('admin-panel').style.display = 'block';
-                document.getElementById('admin-panel').scrollIntoView({ behavior: 'smooth' });
-            } else if (pin !== null) {
-                alert("پین کد اشتباه است!");
-            }
-        }
-
-        function toggleFormSeries() {
-            const type = document.getElementById('add-type').value;
-            // در صورت نیاز به افزودن فیلدهای خاص در فرم مدیریت
-        }
-
-        function saveNewContent() {
-            const type = document.getElementById('add-type').value;
-            const title = document.getElementById('add-title').value;
-            const genre = document.getElementById('add-genre').value;
-            const poster = document.getElementById('add-poster').value || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=400';
-            const desc = document.getElementById('add-desc').value;
-            const url = document.getElementById('add-url').value;
-
-            if(!title || !url) {
-                alert("پر کردن عنوان و لینک ویدیو الزامی است.");
-                return;
-            }
-
-            const newMedia = {
-                id: mediaData.length + 1,
-                type: type,
-                title: title,
-                genre: genre,
-                poster: poster,
-                desc: desc,
-                url: url
+            const newMovie = {
+                id: Date.now(),
+                title, desc, poster, videoUrl, genre,
+                rating: 5.0,
+                feedbacks: []
             };
 
-            mediaData.push(newMedia);
-            renderGrid();
-            alert("محتوا با موفقیت اضافه شد.");
-            
-            // ریست فرم
-            document.getElementById('add-title').value = '';
-            document.getElementById('add-genre').value = '';
-            document.getElementById('add-poster').value = '';
-            document.getElementById('add-desc').value = '';
-            document.getElementById('add-url').value = '';
+            movies.push(newMovie);
+            renderMovies();
+            updateSlider();
+            closeAdmin();
+            alert("فیلم جدید با موفقیت به هوم‌پیج اضافه شد و اسلایدر آپدیت گردید!");
         }
 
-        // اجرای اولیه
-        renderGrid();
-    </script>
-</body>
-</html>
+        // مدال نمایش جزئیات و راه‌اندازی پلیرها
+        function openModal(id) {
+            activeMovieId = id;
+            const movie = movies.find(m => m.id === id);
+            document.getElementById('modalTitle').innerText = movie.title;
+            document.getElementById('modalDesc').innerText = movie.desc;
+            document.getElementById('modalPreview').style.backgroundImage = `url('${movie.poster}')`;
+            
+            // لینک‌دهی به پلیرهای خارجی موبایل اندروید
+            document.getElementById('directPlayBtn').onclick = () => window.open(movie.videoUrl, '_blank');
+            document.getElementById('vlcPlayBtn').onclick = () => window.location.href = `vlc://${movie.videoUrl}`;
+            document.getElementById('mxPlayBtn').onclick = () => window.location.href = `intent:${movie.videoUrl}#Intent;package=com.mxtech.videoplayer.ad;end`;
+            
+            renderFeedbacks(movie);
+            resetRatingStars();
+            document.getElementById('movieModal').style.display = 'block';
+        }
+
+        function closeModal() { document.getElementById('movieModal').style.display = 'none'; }
+
+        // منوی کاربری (ورود و خروج)
+        document.getElementById('userMenuBtn').addEventListener('click', () => {
+            const panel = document.getElementById('userPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        });
+
+        function checkUserAuth() {
+            if(currentUser) {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('profileSection').style.display = 'block';
+                document.getElementById('welcomeMsg').innerText = `کاربر گرامی، ${currentUser} خوش آمدید`;
+            } else {
+                document.getElementById('authSection').style.display = 'block';
+                document.getElementById('profileSection').style.display = 'none';
+            }
+        }
+
+        function loginUser() {
+            const name = document.getElementById('usernameInput').value.trim();
+            if(!name) return alert("نام کاربری را وارد کنید");
+            currentUser = name;
+            localStorage.setItem('stream_user', name);
+            checkUserAuth();
+            document.getElementById('userPanel').style.display
