@@ -7,345 +7,113 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary: #e50914; --background: #141414; --surface: #1f1f1f; --text: #ffffff; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--background); color: var(--text); padding-bottom: 30px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
+        body { background: var(--background); color: var(--text); padding-bottom: 50px; }
         header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #000; position: fixed; top:0; width:100%; z-index:1000; }
         .logo { color: var(--primary); font-size: 22px; font-weight: bold; cursor: pointer; }
-        .menu-btn { background: none; border: none; color: white; font-size: 22px; cursor: pointer; }
-        .sidebar { position: fixed; top: 0; right: -280px; width: 260px; height: 100vh; background: #111; z-index: 2500; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; gap: 15px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); overflow-y: auto; }
-        .sidebar.active { right: 0; }
-        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.6); z-index: 2400; display: none; }
-        .user-box, .genre-box { background: var(--surface); padding: 12px; border-radius: 6px; }
-        .user-box input { width: 100%; padding: 8px; margin-bottom: 8px; background: #333; border: none; color: white; border-radius: 4px; font-size: 12px; }
-        .genre-item { display: block; color: #ccc; padding: 8px 5px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #2a2a2a; }
-        .btn { padding: 8px 15px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; justify-content: center; font-size: 13px; }
-        .btn-p { background: var(--primary); color: white; }
-        .btn-i { background: #555; color: white; }
-        .hero { position: relative; width: 100%; height: 40vh; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 20px; margin-top: 60px; }
-        .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, var(--background), transparent); }
-        .hero-c { position: relative; z-index: 2; }
-        .main { padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-top: 10px; }
-        .card { background: var(--surface); border-radius: 6px; overflow: hidden; cursor: pointer; }
+        .row { margin-bottom: 30px; padding: 0 15px; }
+        .row-title { font-size: 18px; margin-bottom: 15px; border-right: 4px solid var(--primary); padding-right: 10px; }
+        .row-grid { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
+        .card { min-width: 130px; width: 130px; background: var(--surface); border-radius: 6px; overflow: hidden; cursor: pointer; }
         .poster { width: 100%; height: 170px; object-fit: cover; }
-        .card-body { padding: 8px; font-size: 13px; }
+        .card-body { padding: 8px; font-size: 12px; }
+        .btn { padding: 8px 15px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; justify-content: center; }
+        .btn-p { background: var(--primary); color: white; }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; overflow-y: auto; padding: 15px; }
         .modal-c { background: var(--surface); max-width: 500px; margin: 40px auto; border-radius: 8px; padding: 15px; position: relative; }
-        .close { position: absolute; top: 10px; left: 10px; background: #000; border: none; color: white; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; }
-        .ep-list { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; background: #111; padding: 10px; border-radius: 6px; max-height: 120px; overflow-y: auto; }
-        .ep-btn { padding: 6px 12px; background: #333; border-radius: 4px; cursor: pointer; font-size: 12px; border: 1px solid #444; }
-        .ep-btn.active { background: var(--primary); border-color: var(--primary); }
-        .p-sec { margin: 15px 0; display: flex; flex-direction: column; gap: 8px; }
-        .feed-sec { margin-top: 20px; border-top: 1px solid #333; padding-top: 15px; }
-        .stars { display: flex; gap: 5px; margin: 8px 0; font-size: 20px; color: #444; cursor: pointer; }
-        .stars .fa-star.active { color: #ffb400; }
-        #adminPanel { position: fixed; bottom: 0; left: 0; width: 100%; height: 85vh; background: #111; border-top: 2px solid var(--primary); z-index: 3000; display: none; padding: 20px; overflow-y: auto; }
-        .form-g { margin-bottom: 12px; }
-        .form-g label { display: block; font-size: 12px; margin-bottom: 4px; color: #aaa; }
+        .admin-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 80vh; background: #111; z-index: 3000; display: none; padding: 20px; overflow-y: auto; }
+        .form-g { margin-bottom: 10px; }
         .form-g input, .form-g select { width: 100%; padding: 8px; background: #222; border: 1px solid #333; color: white; border-radius: 4px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <button class="menu-btn" id="openMenu"><i class="fa-solid fa-bars"></i></button>
-            <div class="logo" id="logoBtn">StreamFlix</div>
-        </div>
-        <div id="filterIndicator" style="font-size:12px; color:var(--primary); font-weight:bold;"></div>
+        <div class="logo" id="logoBtn">StreamFlix</div>
+        <button class="btn btn-p" id="openAdmin" style="display:none;">مدیریت</button>
     </header>
 
-    <div class="sidebar-overlay" id="overlay"></div>
-    <div class="sidebar" id="sidebar">
-        <button class="menu-btn" id="closeMenu" style="font-size:15px; text-align:right; margin-bottom:10px;"><i class="fa-solid fa-xmark"></i> بستن منو</button>
-        
-        <div class="user-box">
-            <div id="authSec">
-                <h5 style="margin-bottom:8px;"><i class="fa-solid fa-user-plus"></i> عضویت و ورود سریع</h5>
-                <input type="text" id="userInput" placeholder="نام کاربری...">
-                <input type="password" id="passInput" placeholder="رمز عبور...">
-                <input type="text" id="contactInput" placeholder="ایمیل یا شماره تلفن...">
-                <button class="btn btn-p" style="width:100%;" onclick="login()">ثبت نام / ورود</button>
-            </div>
-            <div id="profSec" style="display:none;">
-                <p id="welcome" style="font-size:12px; margin-bottom:8px; color:#2ecc71; font-weight:bold;"></p>
-                <button class="btn btn-p" style="width:100%; background:#c33;" onclick="logout()">خروج</button>
-            </div>
-        </div>
-
-        <div class="genre-box">
-            <h5 style="margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-tags"></i> دسته‌بندی و ژانرها</h5>
-            <div id="menuGenres"></div>
-        </div>
-    </div>
-
-    <div class="hero" id="hero">
-        <div class="hero-c">
-            <h2 id="heroT">بارگذاری...</h2>
-            <button class="btn btn-p" id="heroBtn" style="margin-top:10px;"><i class="fa-solid fa-play"></i> تماشا</button>
-        </div>
-    </div>
-
-    <div class="main">
-        <h4 id="sectionTitle"><i class="fa-solid fa-fire" style="color:var(--primary); margin-left:5px;"></i>فیلم و سریال‌های پیشنهادی</h4>
-        <div class="grid" id="grid"></div>
-    </div>
+    <div id="content" style="margin-top: 80px;"></div>
 
     <div class="modal" id="modal">
         <div class="modal-c">
-            <button class="close" onclick="closeM()"><i class="fa-solid fa-xmark"></i></button>
-            <h3 id="mTitle" style="margin-bottom:5px;"></h3>
-            <span id="mMeta" style="font-size:12px; color:var(--primary); font-weight:bold; display:block; margin-bottom:10px;"></span>
-            <p id="mDesc" style="font-size:13px; color:#aaa; line-height:1.5;"></p>
-            
-            <div id="serialSection" style="display:none; margin-top:15px;">
-                <h5 style="font-size:13px; color:#fff;"><i class="fa-solid fa-list"></i> انتخاب قسمت:</h5>
-                <div class="ep-list" id="epListContainer"></div>
-            </div>
-            
-            <div class="p-sec">
-                <button class="btn btn-p" id="p1"><i class="fa-solid fa-desktop"></i> پخش مستقیم آنلاین</button>
-                <a class="btn btn-p" id="pDlOrg" style="background:#2ecc71;" download><i class="fa-solid fa-download"></i> دانلود کیفیت اصلی</a>
-                <a class="btn btn-p" id="pDl480" style="background:#27ae60;" download><i class="fa-solid fa-arrow-down-long"></i> دانلود کیفیت 480p</a>
-                <button class="btn btn-i" id="p2" style="background:#e67e22;"><i class="fa-solid fa-play"></i> پخش در VLC</button>
-                <button class="btn btn-i" id="p3" style="background:#2980b9;"><i class="fa-solid fa-play"></i> پخش در MX Player</button>
-            </div>
-
-            <div class="feed-sec">
-                <h5>ثبت امتیاز و نظر</h5>
-                <div class="stars" id="stars">
-                    <i class="fa-solid fa-star" data-v="1"></i><i class="fa-solid fa-star" data-v="2"></i><i class="fa-solid fa-star" data-v="3"></i><i class="fa-solid fa-star" data-v="4"></i><i class="fa-solid fa-star" data-v="5"></i>
-                </div>
-                <input type="text" id="commIn" placeholder="نظر شما..." style="width:100%; padding:8px; background:#333; border:none; color:white; margin-bottom:8px; border-radius:4px;">
-                <button class="btn btn-p" onclick="addComm()">ثبت</button>
-                <div id="commList" style="margin-top:10px; max-height:120px; overflow-y:auto; font-size:12px; display:flex; flex-direction:column; gap:6px;"></div>
-            </div>
+            <h3 id="mTitle"></h3>
+            <p id="mDesc" style="font-size:13px; color:#aaa; margin:10px 0;"></p>
+            <div id="epContainer"></div>
+            <div id="pSec" style="margin-top:15px; display:flex; flex-direction:column; gap:8px;"></div>
+            <button class="btn" style="margin-top:10px; background:#444;" onclick="document.getElementById('modal').style.display='none'">بستن</button>
         </div>
     </div>
 
-    <div id="adminPanel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:8px;">
-            <h3>🛠️ مدیریت پلتفرم StreamFlix</h3>
-            <button class="btn btn-i" onclick="closeA()">بستن</button>
-        </div>
-        
-        <div style="background:#1f1f1f; padding:12px; border-radius:6px; margin-bottom:15px; border:1px dashed var(--primary);">
-            <h4 style="font-size:13px; margin-bottom:8px;"><i class="fa-solid fa-plus"></i> تعریف ژانر / دسته‌بندی جدید</h4>
-            <div style="display:flex; gap:8px;">
-                <input type="text" id="newGenreName" placeholder="مثال: ترکی، هندی، انیمیشن" style="width:70%; padding:6px; background:#111; border:1px solid #333; color:white; border-radius:4px;">
-                <button class="btn btn-p" style="width:30%; padding:0;" onclick="makeNewGenre()">ایجاد ژانر</button>
-            </div>
-        </div>
-
+    <div class="admin-panel" id="adminPanel">
+        <h3>افزودن محتوا</h3>
+        <div class="form-g"><input type="text" id="aTitle" placeholder="عنوان"></div>
+        <div class="form-g"><input type="text" id="aPost" placeholder="لینک پوستر"></div>
+        <div class="form-g"><input type="text" id="aUrl" placeholder="لینک ویدیو"></div>
         <div class="form-g">
-            <label>نوع ویدیو</label>
-            <select id="aType" onchange="toggleAdminType()">
-                <option value="movie">🎥 سینمایی</option>
-                <option value="serial">📺 سریال / مجموعه تلویزیونی</option>
-            </select>
+            <select id="aGen"></select>
+            <input type="text" id="newG" placeholder="یا ایجاد ژانر جدید..." style="margin-top:5px;">
         </div>
-
-        <div class="form-g"><label>عنوان (برای سریال نام اصلی را دقیق و یکسان بگذارید)</label><input type="text" id="aTitle"></div>
-        
-        <div id="serialFields" style="display:none; background:rgba(255,255,255,0.02); padding:10px; border-radius:4px; margin-bottom:12px;">
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1;"><label>شماره فصل</label><input type="number" id="aSeason" value="1"></div>
-                <div style="flex:1;"><label>شماره قسمت</label><input type="number" id="aEpisode" value="1"></div>
-            </div>
-        </div>
-
-        <div class="form-g"><label>توضیحات</label><input type="text" id="aDesc"></div>
-        <div class="form-g"><label>کاور (لینک عکس)</label><input type="text" id="aPost"></div>
-        <div class="form-g"><label>لینک ویدیو / قسمت (کیفیت اصلی)</label><input type="text" id="aUrl"></div>
-        <div class="form-g"><label>لینک ویدیو / قسمت (کیفیت 480p)</label><input type="text" id="aUrl480"></div>
-        <div class="form-g"><label>ژانر</label><select id="aGen"></select></div>
-        <button class="btn btn-p" style="width:100%; padding:10px;" onclick="addMovie()">ذخیره و انتشار</button>
+        <div class="form-g"><select id="aType"><option value="movie">سینمایی</option><option value="serial">سریال</option></select></div>
+        <button class="btn btn-p" onclick="addM()">ذخیره</button>
+        <button class="btn" onclick="document.getElementById('adminPanel').style.display='none'">بستن</button>
     </div>
 
     <script>
-        let defGenres = ["دوبله فارسی", "ترکی", "هندی"];
-        let defMovies = [{id:1,title:"همیشه شادی ۲",type:"movie",desc:"فیلم کمدی و جذاب هند با کیفیت عالی.",poster:"https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",videoUrl:"https://www.w3schools.com/html/mov_bbb.mp4",videoUrl480:"https://www.w3schools.com/html/mov_bbb.mp4",genre:"دوبله فارسی",rating:4.8,feedbacks:[]}];
-        
-        let genres = JSON.parse(localStorage.getItem('m_genres')) || defGenres;
-        let movies = JSON.parse(localStorage.getItem('m_list')) || defMovies;
-        let user = localStorage.getItem('m_user') || null;
-        let activeId = null, curRate = 0, lClick = 0, selectedGenre = 'همه';
-
-        const sb = document.getElementById('sidebar'), ov = document.getElementById('overlay');
-        document.getElementById('openMenu').addEventListener('click', () => { sb.classList.add('active'); ov.style.display='block'; });
-        const closeMenu = () => { sb.classList.remove('active'); ov.style.display='none'; };
-        document.getElementById('closeMenu').addEventListener('click', closeMenu);
-        ov.addEventListener('click', closeMenu);
-
-        document.getElementById('logoBtn').addEventListener('click', () => {
-            lClick++;
-            if (lClick === 4) {
-                if (prompt("پین‌کد مدیریت:") === "1522") { 
-                    refreshAdminGenres();
-                    document.getElementById('adminPanel').style.display = 'block'; 
-                    closeMenu(); 
-                } else alert("خطا!");
-                lClick = 0;
-            }
-            setTimeout(() => { lClick = 0; }, 3000);
-        });
-        const closeA = () => document.getElementById('adminPanel').style.display='none';
-
-        window.addEventListener('DOMContentLoaded', () => { refreshGenresUI(); render(); auth(); });
-
-        function toggleAdminType() {
-            document.getElementById('serialFields').style.display = document.getElementById('aType').value === 'serial' ? 'block' : 'none';
-        }
-
-        function refreshGenresUI() {
-            localStorage.setItem('m_genres', JSON.stringify(genres));
-            const container = document.getElementById('menuGenres');
-            container.innerHTML = `<span class="genre-item" onclick="filterGenre('همه')">🎬 همه محتواها</span>`;
-            genres.forEach(g => { container.innerHTML += `<span class="genre-item" onclick="filterGenre('${g}')">🔹 ${g}</span>`; });
-        }
-
-        function refreshAdminGenres() {
-            const select = document.getElementById('aGen'); select.innerHTML = '';
-            genres.forEach(g => { select.innerHTML += `<option value="${g}">${g}</option>`; });
-        }
-
-        function makeNewGenre() {
-            let val = document.getElementById('newGenreName').value.trim();
-            if(!val) return alert("نام خالی است!");
-            if(!genres.includes(val)) { genres.push(val); refreshGenresUI(); refreshAdminGenres(); document.getElementById('newGenreName').value=''; alert("ژانر ساخته شد!"); }
-        }
+        let genres = JSON.parse(localStorage.getItem('genres')) || ["ایرانی", "خارجی", "ترکی"];
+        let movies = JSON.parse(localStorage.getItem('movies')) || [];
 
         function render() {
-            const g = document.getElementById('grid'); g.innerHTML = '';
-            let filtered = selectedGenre === 'همه' ? movies : movies.filter(m => m.genre === selectedGenre);
-            
-            // حذف کارت‌های تکراری سریال‌ها در صفحه اصلی
-            let uniqueItems = [];
-            filtered.forEach(m => {
-                if(!uniqueItems.some(x => x.title === m.title)) { uniqueItems.push(m); }
+            let container = document.getElementById('content');
+            container.innerHTML = '';
+            genres.forEach(g => {
+                let filtered = movies.filter(m => m.genre === g);
+                if(filtered.length > 0) {
+                    let row = `<div class="row"><div class="row-title">${g}</div><div class="row-grid">`;
+                    filtered.forEach(m => {
+                        row += `<div class="card" onclick="openM(${m.id})"><img class="poster" src="${m.poster}"><div class="card-body"><b>${m.title}</b></div></div>`;
+                    });
+                    row += `</div></div>`;
+                    container.innerHTML += row;
+                }
             });
+        }
 
-            uniqueItems.forEach(m => {
-                let badge = m.type === 'serial' ? '🍿 سریال' : '🎬 سینمایی';
-                g.innerHTML += `<div class="card" onclick="openM(${m.id})"><img class="poster" src="${m.poster}"><div class="card-body"><b>${m.title}</b><br><span style="color:#aaa; font-size:11px;">${m.genre} (${badge})</span> <span style="color:#ffb400; float:left;"><i class="fa-solid fa-star"></i> ${m.rating}</span></div></div>`;
-            });
+        function addM() {
+            let g = document.getElementById('newG').value.trim();
+            if(g && !genres.includes(g)) { genres.push(g); localStorage.setItem('genres', JSON.stringify(genres)); }
             
-            localStorage.setItem('m_list', JSON.stringify(movies));
-            if(movies.length > 0) {
-                let f = movies[movies.length-1];
-                document.getElementById('hero').style.backgroundImage = `url('${f.poster}')`;
-                document.getElementById('heroT').innerText = f.title;
-                document.getElementById('heroBtn').onclick = () => openM(f.id);
+            movies.push({
+                id: Date.now(),
+                title: document.getElementById('aTitle').value,
+                poster: document.getElementById('aPost').value,
+                video: document.getElementById('aUrl').value,
+                genre: g || document.getElementById('aGen').value,
+                type: document.getElementById('aType').value
+            });
+            localStorage.setItem('movies', JSON.stringify(movies));
+            render();
+            alert("ذخیره شد!");
+        }
+
+        document.getElementById('logoBtn').addEventListener('click', () => {
+            if(prompt("پین مدیریت:") === "1522") {
+                document.getElementById('adminPanel').style.display = 'block';
+                let s = document.getElementById('aGen');
+                s.innerHTML = '';
+                genres.forEach(g => s.innerHTML += `<option value="${g}">${g}</option>`);
             }
-        }
-
-        function filterGenre(genre) {
-            selectedGenre = genre;
-            document.getElementById('filterIndicator').innerText = genre === 'همه' ? '' : `ژانر: ${genre}`;
-            document.getElementById('sectionTitle').innerHTML = `<i class="fa-solid fa-layer-group" style="color:var(--primary); margin-left:5px;"></i> آرشیو ${genre}`;
-            render(); closeMenu();
-        }
-
-        function addMovie() {
-            let t = document.getElementById('aTitle').value.trim(), d = document.getElementById('aDesc').value, p = document.getElementById('aPost').value, u = document.getElementById('aUrl').value, u480 = document.getElementById('aUrl480').value, g = document.getElementById('aGen').value, type = document.getElementById('aType').value;
-            if(!t || !u) return alert("عنوان و لینک اصلی اجباری است");
-            
-            let s = document.getElementById('aSeason').value;
-            let e = document.getElementById('aEpisode').value;
-
-            movies.push({id:Date.now(), title:t, type:type, season:type==='serial'?parseInt(s):null, episode:type==='serial'?parseInt(e):null, desc:d, poster:p||"https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500", videoUrl:u, videoUrl480:u480||u, genre:g, rating:5.0, feedbacks:[]});
-            render(); closeA(); alert("با موفقیت ثبت شد!");
-        }
+        });
 
         function openM(id) {
-            activeId = id; let m = movies.find(x => x.id === id);
+            let m = movies.find(x => x.id === id);
             document.getElementById('mTitle').innerText = m.title;
-            document.getElementById('mDesc').innerText = m.desc;
-            
-            let sc = document.getElementById('serialSection');
-            if(m.type === 'serial') {
-                document.getElementById('mMeta').innerText = `مجموعه سریالی`;
-                sc.style.display = 'block';
-                setupSerialEpisodes(m.title, id);
-            } else {
-                document.getElementById('mMeta').innerText = `فیلم سینمایی`;
-                sc.style.display = 'none';
-                setMediaUrls(m.videoUrl, m.videoUrl480);
-            }
-            refFeed(m); resetStars();
+            document.getElementById('mDesc').innerText = "ژانر: " + m.genre;
+            document.getElementById('pSec').innerHTML = `<a href="${m.video}" class="btn btn-p">پخش آنلاین</a>`;
             document.getElementById('modal').style.display = 'block';
         }
-
-        function setupSerialEpisodes(title, activeMediaId) {
-            let eps = movies.filter(x => x.title === title && x.type === 'serial');
-            // مرتب سازی بر اساس فصل و بعد قسمت
-            eps.sort((a,b) => (a.season - b.season) || (a.episode - b.episode));
-            
-            let container = document.getElementById('epListContainer');
-            container.innerHTML = '';
-            
-            eps.forEach((ep, idx) => {
-                let btn = document.createElement('span');
-                btn.className = `ep-btn ${ep.id === activeMediaId ? 'active' : ''}`;
-                btn.innerText = `فصل ${ep.season} - ق ${ep.episode}`;
-                btn.onclick = () => {
-                    document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    activeId = ep.id;
-                    setMediaUrls(ep.videoUrl, ep.videoUrl480);
-                };
-                container.appendChild(btn);
-                if(idx === 0 && ep.id === activeMediaId) { setMediaUrls(ep.videoUrl, ep.videoUrl480); }
-                else if(ep.id === activeMediaId) { setMediaUrls(ep.videoUrl, ep.videoUrl480); }
-            });
-            // اگر اولین بار است باز شده، اولین قسمت موجود را فعال کن
-            if(eps.length > 0 && !eps.some(x => x.id === activeMediaId)) {
-                container.firstChild.click();
-            } else {
-                let currentActive = eps.find(x => x.id === activeMediaId);
-                if(currentActive) setMediaUrls(currentActive.videoUrl, currentActive.videoUrl480);
-            }
-        }
-
-        function setMediaUrls(url, url480) {
-            document.getElementById('p1').onclick = () => window.open(url, '_blank');
-            document.getElementById('pDlOrg').href = url;
-            document.getElementById('pDl480').href = url480 || url;
-            document.getElementById('p2').onclick = () => window.location.href = `vlc://${url}`;
-            document.getElementById('p3').onclick = () => window.location.href = `intent:${url}#Intent;package=com.mxtech.videoplayer.ad;end`;
-        }
-
-        const closeM = () => document.getElementById('modal').style.display='none';
-
-        function auth() {
-            if(user) { document.getElementById('authSec').style.display='none'; document.getElementById('profSec').style.display='block'; document.getElementById('welcome').innerText = `خوش آمدید ${user}`; }
-            else { document.getElementById('authSec').style.display='block'; document.getElementById('profSec').style.display='none'; }
-        }
-        function login() { 
-            let n = document.getElementById('userInput').value.trim(); let p = document.getElementById('passInput').value.trim(); let c = document.getElementById('contactInput').value.trim();
-            if(!n || !p || !c) return alert("تمامی فیلدها را پر کنید!"); 
-            user = n; localStorage.setItem('m_user', n); auth(); closeMenu(); 
-        }
-        function logout() { localStorage.removeItem('m_user'); user = null; auth(); closeMenu(); }
-
-        const st = document.querySelectorAll('#stars i');
-        st.forEach(s => { s.addEventListener('click', (e) => { curRate = parseInt(e.target.getAttribute('data-v')); st.forEach((x,i) => i < curRate ? x.classList.add('active'):x.classList.remove('active')); }); });
-        function resetStars() { curRate = 0; st.forEach(x => x.classList.remove('active')); document.getElementById('commIn').value=''; }
-
-        function refFeed(m) {
-            const c = document.getElementById('commList'); c.innerHTML = '';
-            if(!m.feedbacks || m.feedbacks.length===0) { c.innerHTML='<p style="color:#666;">بدون نظر</p>'; return; }
-            m.feedbacks.forEach(f => c.innerHTML += `<div style="background:rgba(255,255,255,0.05); padding:6px; border-radius:4px;"><b>${f.user}:</b> ${f.txt} <span style="color:#ffb400; float:left;">${f.r}</span></div>`);
-        }
-
-        function addComm() {
-            if(!user) return alert("ابتدا وارد شوید"); if(curRate===0) return alert("امتیاز بدهید");
-            let t = document.getElementById('commIn').value.trim(); if(!t) return alert("متن؟");
-            let m = movies.find(x => x.id === activeId);
-            m.feedbacks.push({user:user, txt:t, r:curRate});
-            m.rating = (m.feedbacks.reduce((a,b)=>a+b.r,0)/m.feedbacks.length).toFixed(1);
-            render(); refFeed(m); resetStars(); alert("ثبت شد!");
-        }
+        
+        render();
     </script>
 </body>
 </html>
